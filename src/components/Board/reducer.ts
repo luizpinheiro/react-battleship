@@ -11,7 +11,7 @@ import {
 export const PLAYER_SHOTS = 3
 export const WAIT_BEFORE_TURN_TIME = 3000
 export const GAME_SIZE = 10
-export const TOTAL_SHIPS = 1
+export const TOTAL_SHIPS = 5
 
 const floatingShipsFilter = (ship: Ship) =>
   ship.totalHits < ship.positions.length
