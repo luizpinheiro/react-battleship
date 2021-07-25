@@ -1,0 +1,10 @@
+.ci-eslint/
+.git/
+.cache/
+node_modules/
+lib/
+build/
+config/
+scripts/
+public/
+cicd/
