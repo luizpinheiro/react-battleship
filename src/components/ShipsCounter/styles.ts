@@ -5,7 +5,7 @@ export const MainContainer = styled.div`
   flex-direction: row;
   align-items: center;
   font-size: 32px;
-
+  color: darkblue;
   img {
     margin-right: 10px;
   }

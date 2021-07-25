@@ -85,7 +85,7 @@ export const Cell = styled.div<{
   box-sizing: border-box;
   width: ${CELL_SIZE}px;
   height: ${CELL_SIZE}px;
-  border: 1px solid rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   cursor: not-allowed;
 
   ${(props) =>
