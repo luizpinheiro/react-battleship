@@ -48,7 +48,7 @@ const Board = ({ peerId }: Props) => {
   return (
     <S.MainContainer>
       <SidePanel
-        peerId="6ACyHxT4"
+        peerId={state.peerId}
         gameStatus={state.gameStatus}
         onReady={handleReady}
         onPositioned={handlePositioned}

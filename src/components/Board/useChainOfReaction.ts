@@ -35,7 +35,7 @@ export default (
     const onConnected = () => {
       dispatch({ type: Actions.CONNECTION_ESTABLISHED })
     }
-    initializePeer(peerId ? state.peerId : '6ACyHxT4', onConnected).then(() => {
+    initializePeer(state.peerId, onConnected).then(() => {
       if (peerId) connect(peerId)
     })
   }, [])

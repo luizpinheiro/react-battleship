@@ -1,15 +1,16 @@
 import React from 'react'
 
-import { useParams } from 'react-router-dom'
+import QueryString from 'query-string'
+import { useLocation } from 'react-router-dom'
 
 import Board from './components/Board'
 
 function App() {
-  const { peerId } = useParams<{ peerId: string }>()
-  console.log(`PeerId from URL:`, peerId)
+  const location = useLocation()
+  const { p } = QueryString.parse(location.search)
   return (
     <>
-      <Board peerId={peerId} />
+      <Board peerId={p ? p.toString() : ''} />
     </>
   )
 }

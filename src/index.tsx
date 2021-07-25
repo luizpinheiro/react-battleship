@@ -10,16 +10,8 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Switch>
-        <Route
-          path={`${process.env.REACT_APP_ROUTE_PATH_PREFIX}`}
-          component={App}
-          exact
-        />
-        <Route
-          path={`${process.env.REACT_APP_ROUTE_PATH_PREFIX}/:peerId`}
-          component={App}
-          exact
-        />
+        <Route path="/" component={App} exact />
+        <Route path="/:peerId" component={App} exact />
       </Switch>
     </Router>
   </React.StrictMode>,

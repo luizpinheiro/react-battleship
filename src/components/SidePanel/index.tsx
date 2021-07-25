@@ -30,10 +30,10 @@ const SidePanel = ({
         Waiting for opponent. Share this link with a friend:
         <br />
         <a
-          href={`${process.env.REACT_APP_URL}/${peerId}`}
+          href={`${process.env.REACT_APP_URL}/?p=${peerId}`}
           onClick={(e) => e.preventDefault()}
         >
-          {process.env.REACT_APP_URL}/{peerId}
+          {process.env.REACT_APP_URL}/?p={peerId}
         </a>
         . After they connect, a &quot;Ready&quot; button will appear for you to
         click.
