@@ -11,6 +11,7 @@ import {
 export const PLAYER_SHOTS = 3
 export const WAIT_BEFORE_TURN_TIME = 3000
 export const GAME_SIZE = 10
+export const TOTAL_SHIPS = 1
 
 const floatingShipsFilter = (ship: Ship) =>
   ship.totalHits < ship.positions.length
@@ -59,9 +60,9 @@ export const initialState: State = retrieveState({
   lastShotPosition: null,
   lastShotHit: false,
   lastShotSunk: false,
-  playerShips: generateShipsRandomlyPositioned(GAME_SIZE, 5),
-  playerFloatingShips: 5,
-  opponentFloatingShips: 5,
+  playerShips: generateShipsRandomlyPositioned(GAME_SIZE, TOTAL_SHIPS),
+  playerFloatingShips: TOTAL_SHIPS,
+  opponentFloatingShips: TOTAL_SHIPS,
   playerHits: [],
   playerMisses: [],
   opponentHits: [],
@@ -73,6 +74,10 @@ export const initialState: State = retrieveState({
 
 const reducerFunction = (state: State, action: Action): State => {
   switch (action.type) {
+    /**
+     * With this action we change states to reflect an opponent being
+     * available within the peer connection.
+     */
     case Actions.CONNECTION_ESTABLISHED:
       return {
         ...state,
@@ -82,6 +87,12 @@ const reducerFunction = (state: State, action: Action): State => {
           ...state.log,
         ],
       }
+
+    /**
+     * When the player shots, we must change the state to reflect the ammunition
+     * reduction as well as define if the turn must be passed (afterTurnDelay).
+     * We also record the last shot position so we can process it later.
+     */
     case Actions.SHOT:
       if (state.gameStatus !== GameStatus.ongoing) return state
       if (state.playerShots === 0) return state
@@ -97,6 +108,10 @@ const reducerFunction = (state: State, action: Action): State => {
         lastShotPosition: action.position,
       })
 
+    /**
+     * When the opponent notifies back regarding a hit, we need to update
+     * the state to reflect the number of hits and update the logs.
+     */
     case Actions.PLAYER_HIT:
       if (!action.position) return state
       return persistAndReturn({
@@ -105,6 +120,10 @@ const reducerFunction = (state: State, action: Action): State => {
         log: [`You HIT a ship!`, ...state.log],
       })
 
+    /**
+     * Similarly to what happens when the opponent notifies about a hit,
+     * we need to update our state whenever the player misses a shot.
+     */
     case Actions.PLAYER_MISS:
       if (!action.position) return state
       return persistAndReturn({
@@ -113,6 +132,11 @@ const reducerFunction = (state: State, action: Action): State => {
         log: [`You MISSED a ship and hit water!`, ...state.log],
       })
 
+    /**
+     * When the opponent shots the player, they inform the position they have shot
+     * and then we need to check if they hit something (and if they sunk something in case
+     * they hit) or if they miss. We also update our ship status and counters for further use.
+     */
     case Actions.OPPONENT_SHOT: {
       if (!action.position) return state
       const shipHit = hasShipOnPosition(action.position, state.playerShips)
@@ -157,6 +181,11 @@ const reducerFunction = (state: State, action: Action): State => {
       }
     }
 
+    /**
+     * If an opponent ship sinks we need to update the counter of ships, check
+     * if there is any winner based on the counters and update the game status
+     * if needed. If a player sinks all of the opponent's ships then they win the game.
+     */
     case Actions.OPPONENT_SHIP_SUNK: {
       const floatingShips = state.opponentFloatingShips - 1
       let logs = ['You have sunk an opponent ship!']
@@ -170,6 +199,11 @@ const reducerFunction = (state: State, action: Action): State => {
       }
     }
 
+    /**
+     * If we finish the turn, we need to update the counters and flags that
+     * help us to understand what happened in the turn so they won't affect
+     * the next round.
+     */
     case Actions.PLAYER_FINISHED_TURN:
       if (state.gameStatus !== GameStatus.ongoing) return state
       return {
@@ -183,6 +217,10 @@ const reducerFunction = (state: State, action: Action): State => {
         log: ['>>> Opponent turn has begun! <<<', ...state.log],
       }
 
+    /**
+     * If the opponent finishes their round, we must also update our flags
+     * and counters to reflect a new turn state.
+     */
     case Actions.OPPONENT_FINISHED_TURN:
       if (state.gameStatus !== GameStatus.ongoing) return state
       return {
@@ -196,6 +234,11 @@ const reducerFunction = (state: State, action: Action): State => {
         log: ['>>> Your turn has begun! <<<', ...state.log],
       }
 
+    /**
+     * Whenever the player is ready we must change the game status so we
+     * can react when the opponent marks itself as ready as well. If they
+     * already did that, than we can move to the positioning phase.
+     */
     case Actions.READY:
       return {
         ...state,
@@ -207,6 +250,11 @@ const reducerFunction = (state: State, action: Action): State => {
         playerReady: true,
       }
 
+    /**
+     * Whenever the opponent becomes ready we must change the game status so we
+     * can react when the player readiness. If they
+     * already did that, than we can move to the positioning phase.
+     */
     case Actions.OPPONENT_READY:
       if (
         state.gameStatus !== GameStatus.idle &&
@@ -223,6 +271,11 @@ const reducerFunction = (state: State, action: Action): State => {
         opponentReady: true,
       }
 
+    /**
+     * When the player finishes positioning its ships, we need to update
+     * the state game accordingly. If the opponent is already positioned,
+     * then we can start the next phase.
+     */
     case Actions.FINISHED_POSITIONING:
       return {
         ...state,
@@ -237,6 +290,12 @@ const reducerFunction = (state: State, action: Action): State => {
         playerPositioned: true,
         log: ['You finished positioning your ships', ...state.log],
       }
+
+    /**
+     * When the opponent finishes positioning their boats, we need
+     * to update the state to reflect and if the player is all done
+     * positioning as well, we can move to the next phase.
+     */
     case Actions.OPPONENT_FINISHED_POSITIONING:
       if (
         state.gameStatus !== GameStatus.playerPositioned &&
@@ -256,34 +315,29 @@ const reducerFunction = (state: State, action: Action): State => {
         opponentPositioned: true,
         log: ['Your opponent finished positioning their ships', ...state.log],
       }
+
+    /**
+     * If the player decides to play again or if their opponent decides
+     * we need to restore the state to become as the initial one, except
+     * for the ships that must be recalculated and also we reset the log
+     */
     case Actions.PLAY_AGAIN:
       return {
         ...state,
-        turn: Turn.opponent,
-        gameStatus: GameStatus.idle,
-        playerShots: 3,
-        opponentShots: 3,
-        lastShotSunk: false,
-        lastShotHit: false,
-        lastShotPosition: null,
-        playerReady: false,
-        opponentReady: false,
-        playerPositioned: false,
-        opponentPositioned: false,
-        winner: null,
+        ...initialState,
+        peerConnected: true,
         log: ['Game restarted'],
-        playerShips: generateShipsRandomlyPositioned(GAME_SIZE, 5),
-        playerFloatingShips: 5,
-        opponentFloatingShips: 5,
-        playerHits: [],
-        playerMisses: [],
-        opponentHits: [],
-        opponentMisses: [],
+        playerShips: generateShipsRandomlyPositioned(GAME_SIZE, TOTAL_SHIPS),
       }
+
+    /**
+     * If the player try to reposition their ships, we need to generate new
+     * random ones
+     */
     case Actions.REPOSITION_SHIPS:
       return {
         ...state,
-        playerShips: generateShipsRandomlyPositioned(GAME_SIZE, 5),
+        playerShips: generateShipsRandomlyPositioned(GAME_SIZE, TOTAL_SHIPS),
       }
     default:
       return state

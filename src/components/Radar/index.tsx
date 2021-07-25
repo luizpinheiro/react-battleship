@@ -4,6 +4,8 @@ import * as S from './styles'
 import { Coordinate, Ship } from '../../types'
 import { hasCoordinate } from '../../utils/miscellaneous'
 import { Turn } from '../../enums'
+import winnerImage from './images/winner.png'
+import loserImage from './images/loser.png'
 
 type Props = {
   gameSize: number
@@ -14,6 +16,7 @@ type Props = {
   playerMissPositions: Coordinate[]
   opponentMissPositions: Coordinate[]
   onShot: (position: Coordinate) => void
+  winner: Turn | null
 }
 
 const letterIndexes = [
@@ -42,6 +45,7 @@ const Radar = ({
   playerMissPositions,
   opponentMissPositions,
   onShot,
+  winner,
 }: Props) => {
   const shipsPositions = useMemo(
     () => ships.map((ship) => ship.positions).flat(),
@@ -110,7 +114,21 @@ const Radar = ({
     }
   }
 
-  return <S.MainContainer gameSize={gameSize}>{cells}</S.MainContainer>
+  return (
+    <S.MainContainer gameSize={gameSize}>
+      {winner === Turn.player && (
+        <S.WinnerBanner>
+          <img src={winnerImage} alt="" width={256} height={256} />
+        </S.WinnerBanner>
+      )}
+      {winner === Turn.opponent && (
+        <S.LoserBanner>
+          <img src={loserImage} alt="" width={256} height={256} />
+        </S.LoserBanner>
+      )}
+      {cells}
+    </S.MainContainer>
+  )
 }
 
 export default React.memo(Radar)

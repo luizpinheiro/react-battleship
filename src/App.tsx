@@ -3,6 +3,7 @@ import React from 'react'
 import QueryString from 'query-string'
 import { useLocation } from 'react-router-dom'
 
+import * as S from './styles'
 import Board from './components/Board'
 
 function App() {
@@ -11,6 +12,15 @@ function App() {
   return (
     <>
       <Board peerId={p ? p.toString() : ''} />
+      <S.CreditsContainer>
+        <div>
+          Sound effects by{' '}
+          <a href="https://mixkit.co" rel="noreferrer" target="_blank">
+            mixkit.co
+          </a>
+          .
+        </div>
+      </S.CreditsContainer>
     </>
   )
 }
