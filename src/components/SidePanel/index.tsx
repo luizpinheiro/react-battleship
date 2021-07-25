@@ -95,4 +95,4 @@ const SidePanel = ({
   </S.MainContainer>
 )
 
-export default SidePanel
+export default React.memo(SidePanel)

@@ -10,6 +10,7 @@ import {
 
 export const PLAYER_SHOTS = 3
 export const WAIT_BEFORE_TURN_TIME = 3000
+export const GAME_SIZE = 10
 
 const floatingShipsFilter = (ship: Ship) =>
   ship.totalHits < ship.positions.length
@@ -58,7 +59,7 @@ export const initialState: State = retrieveState({
   lastShotPosition: null,
   lastShotHit: false,
   lastShotSunk: false,
-  playerShips: generateShipsRandomlyPositioned(12, 5),
+  playerShips: generateShipsRandomlyPositioned(GAME_SIZE, 5),
   playerFloatingShips: 5,
   opponentFloatingShips: 5,
   playerHits: [],
@@ -271,7 +272,7 @@ const reducerFunction = (state: State, action: Action): State => {
         opponentPositioned: false,
         winner: null,
         log: ['Game restarted'],
-        playerShips: generateShipsRandomlyPositioned(12, 5),
+        playerShips: generateShipsRandomlyPositioned(GAME_SIZE, 5),
         playerFloatingShips: 5,
         opponentFloatingShips: 5,
         playerHits: [],
@@ -282,7 +283,7 @@ const reducerFunction = (state: State, action: Action): State => {
     case Actions.REPOSITION_SHIPS:
       return {
         ...state,
-        playerShips: generateShipsRandomlyPositioned(12, 5),
+        playerShips: generateShipsRandomlyPositioned(GAME_SIZE, 5),
       }
     default:
       return state

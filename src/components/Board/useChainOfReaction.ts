@@ -103,11 +103,8 @@ export default (
    */
   useEffect(() => {
     if (state.gameStatus !== GameStatus.ongoing) return
-    if (state.turn === Turn.player) console.log("Player's turn started!")
-    else {
+    if (state.turn === Turn.opponent)
       dispatchToPeer({ type: Actions.OPPONENT_FINISHED_TURN })
-      console.log("Opponent's turn started!")
-    }
   }, [state.turn])
 
   /**
@@ -117,9 +114,7 @@ export default (
    */
   useEffect(() => {
     if (state.afterTurnDelay) {
-      console.log(`Will pass turn after ${WAIT_BEFORE_TURN_TIME}ms...`)
       setTimeout(() => {
-        console.log('Passing turn...')
         dispatch({ type: Actions.PLAYER_FINISHED_TURN })
       }, WAIT_BEFORE_TURN_TIME)
     }

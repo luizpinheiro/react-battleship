@@ -6,11 +6,9 @@ import { Coordinate } from '../../types'
 import { Actions, GameStatus } from '../../enums'
 import PlayerStats from '../PlayerStats'
 import Clock from '../Clock'
-import reducer, { initialState } from './reducer'
+import reducer, { initialState, GAME_SIZE } from './reducer'
 import SidePanel from '../SidePanel'
 import useChainOfReaction from './useChainOfReaction'
-
-const GAME_SIZE = 12
 
 type Props = {
   peerId: string
@@ -84,4 +82,4 @@ const Board = ({ peerId }: Props) => {
   )
 }
 
-export default Board
+export default React.memo(Board)
