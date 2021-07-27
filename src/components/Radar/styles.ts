@@ -1,25 +1,17 @@
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 
 import crosshairImage from './images/crosshair.png'
 import explosionImage from './images/explosion.png'
 import oceanImage from './images/ocean.png'
-import { Turn } from '../../enums'
+import { Orientation, Turn } from '../../enums'
+import waterBgImage from './images/water-bg.jpg'
+import submarine from './images/ships/submarine.png'
+import carrier from './images/ships/carrier.png'
+import boat from './images/ships/boat.png'
+import destroyer from './images/ships/destroyer.png'
+import cruiser from './images/ships/cruiser.png'
 
 const CELL_SIZE = 50
-
-const bgAnimation = keyframes`
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-`
 
 export const MainContainer = styled.div<{ gameSize: number }>`
   position: relative;
@@ -29,22 +21,7 @@ export const MainContainer = styled.div<{ gameSize: number }>`
   flex-direction: row;
   flex-wrap: wrap;
   border: 1px solid black;
-  //background: rgb(78, 70, 221);
-  //background: linear-gradient(
-  //  315deg,
-  //  rgba(78, 70, 221, 1) 0%,
-  //  rgba(95, 95, 238, 1) 35%,
-  //  rgba(0, 170, 255, 1) 100%
-  //);
-  background: rgb(60, 49, 255);
-  background: linear-gradient(
-    315deg,
-    rgba(60, 49, 255, 1) 0%,
-    rgba(95, 95, 238, 1) 35%,
-    rgba(0, 170, 255, 1) 100%
-  );
-  background-size: 200% 200%;
-  animation: ${bgAnimation} 10s easy infinite;
+  background: url('${waterBgImage}') no-repeat;
 `
 
 export const CornerBlock = styled.div`
@@ -82,10 +59,12 @@ export const Cell = styled.div<{
   ship: boolean
   playerTurn: Turn
 }>`
+  position: relative;
+  z-index: 10;
   box-sizing: border-box;
   width: ${CELL_SIZE}px;
   height: ${CELL_SIZE}px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   cursor: not-allowed;
 
   ${(props) =>
@@ -101,17 +80,16 @@ export const Cell = styled.div<{
     }
   `}
   ${(props) =>
-    props.ship && `border-color: darkblue; background-color: lightblue;`}
-  ${(props) =>
     props.miss &&
-    `background: url('${oceanImage}') no-repeat center center; background-size: 50px 50px;`}
+    `background: url('${oceanImage}') no-repeat center center; background-size: 50px 50px; background-color: rgba(0,0,0,.15);`}
   ${(props) =>
     props.hit &&
-    `background-image: url('${explosionImage}'); background-position: center center; background-repeat: no-repeat; background-size: 50px 50px;`}
+    `background-image: url('${explosionImage}'); background-color: rgba(0,0,0,.15); background-position: center center; background-repeat: no-repeat; background-size: 42px 42px;`}
 `
 
 export const WinnerBanner = styled.div`
   position: absolute;
+  z-index: 20;
   top: 0;
   left: 0;
   width: 100%;
@@ -124,6 +102,7 @@ export const WinnerBanner = styled.div`
 
 export const LoserBanner = styled.div`
   position: absolute;
+  z-index: 20;
   top: 0;
   left: 0;
   width: 100%;
@@ -132,4 +111,127 @@ export const LoserBanner = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`
+
+export const ShipsContainer = styled.div`
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  left: 20px;
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+`
+
+export const ShipSubmarine = styled.div<{
+  orientation: Orientation
+  top: number
+  left: number
+}>`
+  position: absolute;
+  background-image: url('${submarine}');
+  background-size: 45px 182px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 50px;
+  height: 200px;
+  top: ${(props) => props.top * 50}px;
+  left: ${(props) => props.left * 50}px;
+  ${(props) =>
+    props.orientation === Orientation.horizontal &&
+    `
+    transform: rotate(-90deg) translate(75px, 75px);
+    `}
+  border-color: rgba(255,255,255,0.35);
+  background-color: rgba(255, 255, 255, 0.08);
+`
+
+export const ShipCarrier = styled.div<{
+  orientation: Orientation
+  top: number
+  left: number
+}>`
+  position: absolute;
+  background-image: url('${carrier}');
+  background-size: 44px 180px;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 50px;
+  height: 250px;
+  top: ${(props) => props.top * 50}px;
+  left: ${(props) => props.left * 50}px;
+  ${(props) =>
+    props.orientation === Orientation.horizontal &&
+    `
+    transform: rotate(-90deg) translate(100px, 100px);
+    `}
+  border-color: rgba(255,255,255,0.35);
+  background-color: rgba(255, 255, 255, 0.08);
+`
+
+export const ShipBoat = styled.div<{
+  orientation: Orientation
+  top: number
+  left: number
+}>`
+  position: absolute;
+  background-image: url('${boat}');
+  background-size: 12px 50px;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 50px;
+  height: 50px;
+  top: ${(props) => props.top * 50}px;
+  left: ${(props) => props.left * 50}px;
+  ${(props) =>
+    props.orientation === Orientation.horizontal &&
+    `
+    transform: rotate(-90deg);
+    `}
+  border-color: rgba(255,255,255,0.35);
+  background-color: rgba(255, 255, 255, 0.08);
+`
+
+export const ShipDestroyer = styled.div<{
+  orientation: Orientation
+  top: number
+  left: number
+}>`
+  position: absolute;
+  background-image: url('${destroyer}');
+  background-size: 25px 125px;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 50px;
+  height: 150px;
+  top: ${(props) => props.top * 50}px;
+  left: ${(props) => props.left * 50}px;
+  ${(props) =>
+    props.orientation === Orientation.horizontal &&
+    `
+    transform: rotate(-90deg) translate(47px, 50px);
+    `}
+  border-color: rgba(255,255,255,0.35);
+  background-color: rgba(255, 255, 255, 0.08);
+`
+
+export const ShipCruiser = styled.div<{
+  orientation: Orientation
+  top: number
+  left: number
+}>`
+  position: absolute;
+  background-image: url('${cruiser}');
+  background-size: 16px 90px;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 50px;
+  height: 100px;
+  top: ${(props) => props.top * 50}px;
+  left: ${(props) => props.left * 50}px;
+  ${(props) =>
+    props.orientation === Orientation.horizontal &&
+    `
+    transform: rotate(-90deg) translate(25px, 25px);
+    `}
+  background-color: rgba(255, 255, 255, 0.08);
 `

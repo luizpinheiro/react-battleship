@@ -1,12 +1,13 @@
 import { Dispatch } from 'react'
 
-import { Actions, ShipStatus } from '../enums'
+import { Actions, Orientation, ShipStatus } from '../enums'
 
 export type Ship = {
   positions: Coordinate[]
   hitPositions: Coordinate[]
   totalHits: 0
   status: ShipStatus
+  orientation: Orientation
 }
 
 export type Coordinate = {

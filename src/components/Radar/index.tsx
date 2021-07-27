@@ -116,6 +116,61 @@ const Radar = ({
 
   return (
     <S.MainContainer gameSize={gameSize}>
+      {playerTurn === Turn.opponent && (
+        <S.ShipsContainer>
+          {ships.map((ship) => {
+            switch (ship.positions.length) {
+              case 5:
+                return (
+                  <S.ShipCarrier
+                    key={5}
+                    orientation={ship.orientation}
+                    top={ship.positions[0].longitude}
+                    left={ship.positions[0].latitude}
+                  />
+                )
+              case 4:
+                return (
+                  <S.ShipSubmarine
+                    key={4}
+                    orientation={ship.orientation}
+                    top={ship.positions[0].longitude}
+                    left={ship.positions[0].latitude}
+                  />
+                )
+              case 3:
+                return (
+                  <S.ShipDestroyer
+                    key={3}
+                    orientation={ship.orientation}
+                    top={ship.positions[0].longitude}
+                    left={ship.positions[0].latitude}
+                  />
+                )
+              case 2:
+                return (
+                  <S.ShipCruiser
+                    key={2}
+                    orientation={ship.orientation}
+                    top={ship.positions[0].longitude}
+                    left={ship.positions[0].latitude}
+                  />
+                )
+              case 1:
+                return (
+                  <S.ShipBoat
+                    key={1}
+                    orientation={ship.orientation}
+                    top={ship.positions[0].longitude}
+                    left={ship.positions[0].latitude}
+                  />
+                )
+              default:
+                return <></>
+            }
+          })}
+        </S.ShipsContainer>
+      )}
       {winner === Turn.player && (
         <S.WinnerBanner>
           <img src={winnerImage} alt="" width={256} height={256} />

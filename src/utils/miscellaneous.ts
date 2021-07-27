@@ -1,5 +1,5 @@
 import { Coordinate, Ship } from '../types'
-import { GameStatus, ShipStatus } from '../enums'
+import { GameStatus, Orientation, ShipStatus } from '../enums'
 import { randomNumber } from './random'
 
 export const hasCoordinate = (
@@ -67,10 +67,12 @@ export const coordinateName = (position: Coordinate): string => {
 }
 
 const generateShip = (mapSize: number, shipSize: number): Ship => {
-  const orientation = randomNumber(0, 1)
+  const orientation = [Orientation.vertical, Orientation.horizontal][
+    randomNumber(0, 1)
+  ]
   const positions: Coordinate[] = []
 
-  if (orientation) {
+  if (orientation === Orientation.vertical) {
     const latitude = randomNumber(0, mapSize - 1)
     const firstLongitudinalCell = randomNumber(0, mapSize - 1 - shipSize)
     for (let i = 0; i < shipSize; i += 1)
@@ -85,6 +87,7 @@ const generateShip = (mapSize: number, shipSize: number): Ship => {
   return {
     positions,
     hitPositions: [],
+    orientation,
     status: ShipStatus.floating,
     totalHits: 0,
   }
