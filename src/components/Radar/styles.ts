@@ -49,31 +49,39 @@ export const MainContainer = styled.div<{ gameSize: number }>`
 
 export const CornerBlock = styled.div`
   box-sizing: border-box;
+  position: relative;
+  z-index: 10;
   width: 20px;
   height: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  background: #efefef;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 255, 0.08);
 `
 
 export const LongitudinalIndex = styled.div`
+  position: relative;
+  z-index: 10;
   box-sizing: border-box;
   width: ${CELL_SIZE}px;
   height: 20px;
   font-size: 16px;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  background: #efefef;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  background: rgba(0, 0, 255, 0.08);
 `
 
 export const LatitudinalIndex = styled.div`
+  position: relative;
+  z-index: 10;
   box-sizing: border-box;
   width: 20px;
   height: ${CELL_SIZE}px;
   font-size: 16px;
   line-height: ${CELL_SIZE}px;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  background: #efefef;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  background: rgba(0, 0, 255, 0.08);
 `
 
 export const Cell = styled.div<{
