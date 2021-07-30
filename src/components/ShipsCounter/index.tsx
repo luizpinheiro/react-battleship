@@ -8,7 +8,7 @@ type Props = {
 }
 const ShipsCounter = ({ counter }: Props) => (
   <S.MainContainer>
-    <img src={shipImage} alt="" width={64} height={64} />
+    <img src={shipImage} alt="" width={32} height={32} />
     <span>{counter}</span>
   </S.MainContainer>
 )

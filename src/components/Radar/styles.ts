@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
 import crosshairImage from './images/crosshair.png'
 import explosionImage from './images/explosion.png'
@@ -13,6 +13,18 @@ import cruiser from './images/ships/cruiser.png'
 
 const CELL_SIZE = 50
 
+const bgAnimation = keyframes`
+  from {
+    background-position: 0px 0px;
+  }
+  50% {
+    background-position: 5px 5px;
+  }
+  to {
+    background-position: 0px 0px;
+  }
+`
+
 export const MainContainer = styled.div<{ gameSize: number }>`
   position: relative;
   margin: 0 auto;
@@ -21,7 +33,18 @@ export const MainContainer = styled.div<{ gameSize: number }>`
   flex-direction: row;
   flex-wrap: wrap;
   border: 1px solid black;
-  background: url('${waterBgImage}') no-repeat;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    width: 700px;
+    height: 700px;
+    background: url('${waterBgImage}');
+    animation: 8s ${bgAnimation} infinite ease-in-out;
+  }
 `
 
 export const CornerBlock = styled.div`

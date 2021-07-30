@@ -42,12 +42,17 @@ export type State = {
   log: string[]
 }
 
-const persistAndReturn = (state: State): State => state
+const generatePeerId = () => {
+  let peerId = localStorage.getItem('peerId')
+  if (!peerId) {
+    peerId = randomStr(12)
+    localStorage.setItem('peerId', peerId)
+  }
+  return peerId
+}
 
-const retrieveState = (state: State) => persistAndReturn(state)
-
-export const initialState: State = retrieveState({
-  peerId: randomStr(8),
+export const initialState: State = {
+  peerId: generatePeerId(),
   peerConnected: false,
   turn: Turn.opponent,
   gameStatus: GameStatus.idle,
@@ -70,7 +75,7 @@ export const initialState: State = retrieveState({
   afterTurnDelay: false,
   winner: null,
   log: [],
-})
+}
 
 const reducerFunction = (state: State, action: Action): State => {
   switch (action.type) {
@@ -97,7 +102,7 @@ const reducerFunction = (state: State, action: Action): State => {
       if (state.gameStatus !== GameStatus.ongoing) return state
       if (state.playerShots === 0) return state
       if (action.position === undefined) return state
-      return persistAndReturn({
+      return {
         ...state,
         playerShots: state.playerShots - 1,
         afterTurnDelay: state.playerShots === 1,
@@ -106,7 +111,7 @@ const reducerFunction = (state: State, action: Action): State => {
           ...state.log,
         ],
         lastShotPosition: action.position,
-      })
+      }
 
     /**
      * When the opponent notifies back regarding a hit, we need to update
@@ -114,11 +119,11 @@ const reducerFunction = (state: State, action: Action): State => {
      */
     case Actions.PLAYER_HIT:
       if (!action.position) return state
-      return persistAndReturn({
+      return {
         ...state,
         playerHits: [...state.playerHits, action.position],
         log: [`You HIT a ship!`, ...state.log],
-      })
+      }
 
     /**
      * Similarly to what happens when the opponent notifies about a hit,
@@ -126,11 +131,11 @@ const reducerFunction = (state: State, action: Action): State => {
      */
     case Actions.PLAYER_MISS:
       if (!action.position) return state
-      return persistAndReturn({
+      return {
         ...state,
         playerMisses: [...state.playerMisses, action.position],
         log: [`You MISSED a ship and hit water!`, ...state.log],
-      })
+      }
 
     /**
      * When the opponent shots the player, they inform the position they have shot
@@ -344,5 +349,4 @@ const reducerFunction = (state: State, action: Action): State => {
   }
 }
 
-export default (state: State, action: Action) =>
-  persistAndReturn(reducerFunction(state, action))
+export default (state: State, action: Action) => reducerFunction(state, action)
