@@ -3,6 +3,8 @@ import React from 'react'
 import * as S from './styles'
 import { GameStatus, Turn } from '../../enums'
 import Clock from '../Clock'
+import Rules from '../Rules'
+import BattleLog from '../BattleLog'
 
 type Props = {
   gameStatus: GameStatus
@@ -92,15 +94,7 @@ const CenterPanel = ({
         </S.DescriptionText>
       )}
       <S.Separator />
-      <S.LogContainer>
-        <S.LogTitle>Battle Log</S.LogTitle>
-        <S.MessagesContainer>
-          {log.map((message, index) => {
-            const k = `${log.length - index}`
-            return <S.LogMessage key={k}>{message}</S.LogMessage>
-          })}
-        </S.MessagesContainer>
-      </S.LogContainer>
+      {gameStatus !== GameStatus.idle ? <BattleLog log={log} /> : <Rules />}
     </S.MainContainer>
   </S.OutterContainer>
 )

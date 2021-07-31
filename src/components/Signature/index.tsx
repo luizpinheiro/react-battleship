@@ -25,4 +25,4 @@ const Signature = () => (
   </S.MainContainer>
 )
 
-export default Signature
+export default React.memo(Signature)

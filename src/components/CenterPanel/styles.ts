@@ -51,29 +51,6 @@ export const Separator = styled.div`
   border: 1px dashed rgba(0, 0, 0, 0.25);
 `
 
-export const LogContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`
-
-export const LogTitle = styled.h3`
-  color: darkgreen;
-  margin: 0 0 16px;
-`
-export const LogMessage = styled.p`
-  font-size: 12px;
-  margin: 3px 0;
-  color: darkgreen;
-  &:nth-child(even) {
-    color: darkblue;
-  }
-`
-
-export const MessagesContainer = styled.div`
-  max-height: 290px;
-  overflow: auto;
-`
-
 export const DescriptionText = styled.div`
   font-size: 14px;
   margin-bottom: 10px;
