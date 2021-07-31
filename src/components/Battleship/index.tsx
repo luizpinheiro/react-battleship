@@ -1,25 +1,24 @@
-import React, { useCallback, useEffect, useReducer, useRef } from 'react'
+import React, { useCallback, useReducer, useRef } from 'react'
 
 import * as S from './styles'
 import Radar from '../Radar'
 import { Coordinate } from '../../types'
 import { Actions, GameStatus, Turn } from '../../enums'
-import PlayerStats from '../PlayerStats'
-import Clock from '../Clock'
 import reducer, { initialState, GAME_SIZE } from './reducer'
-import SidePanel from '../SidePanel'
+import CenterPanel from '../CenterPanel'
 import useChainOfReaction from './useChainOfReaction'
 import explosionSound from './sounds/explosion.mp3'
 import waterHitSound from './sounds/water-hit.mp3'
 import winSound from './sounds/win.mp3'
 import loseSound from './sounds/lose.mp3'
 import { dispatchToPeer } from '../../modules/communication'
+import useSound from './useSound'
 
 type Props = {
   peerId: string
 }
 
-const Board = ({ peerId }: Props) => {
+const Battleship = ({ peerId }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const explosionSoundRef = useRef<HTMLAudioElement>(null)
   const waterHitSoundRef = useRef<HTMLAudioElement>(null)
@@ -51,44 +50,34 @@ const Board = ({ peerId }: Props) => {
     dispatchToPeer({ type: Actions.PLAY_AGAIN })
   }, [dispatch])
 
-  useEffect(() => {
-    if (state.gameStatus === GameStatus.ongoing && explosionSoundRef.current) {
-      explosionSoundRef.current.pause()
-      explosionSoundRef.current.currentTime = 0
-      explosionSoundRef.current.play()
-    }
-  }, [state.playerHits, state.opponentHits])
-
-  useEffect(() => {
-    if (state.gameStatus === GameStatus.ongoing && waterHitSoundRef.current) {
-      waterHitSoundRef.current.pause()
-      waterHitSoundRef.current.currentTime = 0
-      waterHitSoundRef.current.play()
-    }
-  }, [state.playerMisses, state.opponentMisses])
-
-  useEffect(() => {
-    if (state.gameStatus === GameStatus.finished) {
-      if (state.winner === Turn.player && winSoundRef.current) {
-        winSoundRef.current.pause()
-        winSoundRef.current.currentTime = 0
-        winSoundRef.current.play()
-      } else if (loseSoundRef.current) {
-        loseSoundRef.current.pause()
-        loseSoundRef.current.currentTime = 0
-        loseSoundRef.current.play()
-      }
-    }
-  }, [state.gameStatus])
-
   useChainOfReaction(state, dispatch, peerId)
+  useSound(
+    explosionSoundRef,
+    waterHitSoundRef,
+    winSoundRef,
+    loseSoundRef,
+    state,
+  )
 
   return (
     <>
       <S.MainContainer>
-        <SidePanel
+        <Radar
+          gameSize={GAME_SIZE}
+          gameStatus={state.gameStatus}
+          winner={state.winner}
+          turn={state.turn}
+          side={Turn.player}
+          shotsAvailable={state.playerShots}
+          ships={state.playerShips}
+          hitPositions={state.opponentHits}
+          missPositions={state.opponentMisses}
+          onShot={handleShot}
+        />
+        <CenterPanel
           peerId={state.peerId}
           gameStatus={state.gameStatus}
+          turn={state.turn}
           onReady={handleReady}
           onPositioned={handlePositioned}
           log={state.log}
@@ -96,30 +85,18 @@ const Board = ({ peerId }: Props) => {
           onReposition={handleReposition}
           connected={state.peerConnected}
         />
-        <S.CenterPanel gameSize={GAME_SIZE}>
-          <S.Header>
-            <PlayerStats
-              shipsCounter={state.playerFloatingShips}
-              torpedosCounter={state.playerShots}
-            />
-            <Clock gameStatus={state.gameStatus} turn={state.turn} />
-            <PlayerStats
-              shipsCounter={state.opponentFloatingShips}
-              torpedosCounter={state.opponentShots}
-            />
-          </S.Header>
-          <Radar
-            winner={state.winner}
-            playerTurn={state.turn}
-            gameSize={GAME_SIZE}
-            ships={state.playerShips}
-            playerHitPositions={state.playerHits}
-            opponentHitPositions={state.opponentHits}
-            playerMissPositions={state.playerMisses}
-            opponentMissPositions={state.opponentMisses}
-            onShot={handleShot}
-          />
-        </S.CenterPanel>
+        <Radar
+          gameSize={GAME_SIZE}
+          gameStatus={state.gameStatus}
+          winner={state.winner}
+          turn={state.turn}
+          side={Turn.opponent}
+          shotsAvailable={state.opponentShots}
+          ships={[]}
+          hitPositions={state.playerHits}
+          missPositions={state.playerMisses}
+          onShot={handleShot}
+        />
       </S.MainContainer>
       <audio ref={explosionSoundRef} controls={false} autoPlay={false}>
         <source src={explosionSound} type="audio/mp3" />
@@ -137,4 +114,4 @@ const Board = ({ peerId }: Props) => {
   )
 }
 
-export default React.memo(Board)
+export default React.memo(Battleship)

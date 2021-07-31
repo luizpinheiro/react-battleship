@@ -3,18 +3,20 @@ import React, { useMemo } from 'react'
 import * as S from './styles'
 import { Coordinate, Ship } from '../../types'
 import { hasCoordinate } from '../../utils/miscellaneous'
-import { Turn } from '../../enums'
+import { GameStatus, Turn } from '../../enums'
 import winnerImage from './images/winner.png'
 import loserImage from './images/loser.png'
+import PlayerStats from '../PlayerStats'
 
 type Props = {
   gameSize: number
-  playerTurn: Turn
+  gameStatus: GameStatus
+  turn: Turn
+  side: Turn
   ships: Ship[]
-  playerHitPositions: Coordinate[]
-  opponentHitPositions: Coordinate[]
-  playerMissPositions: Coordinate[]
-  opponentMissPositions: Coordinate[]
+  shotsAvailable: number
+  hitPositions: Coordinate[]
+  missPositions: Coordinate[]
   onShot: (position: Coordinate) => void
   winner: Turn | null
 }
@@ -38,25 +40,27 @@ const letterIndexes = [
 
 const Radar = ({
   gameSize,
-  playerTurn,
+  gameStatus,
+  turn,
+  side,
   ships,
-  playerHitPositions,
-  opponentHitPositions,
-  playerMissPositions,
-  opponentMissPositions,
+  shotsAvailable,
+  hitPositions,
+  missPositions,
   onShot,
   winner,
 }: Props) => {
   const shipsPositions = useMemo(
-    () => ships.map((ship) => ship.positions).flat(),
+    () =>
+      side === Turn.player ? ships.map((ship) => ship.positions).flat() : [],
     [ships],
   )
 
   const handleShot = (position: Coordinate) => {
     if (
-      playerTurn === Turn.opponent ||
-      hasCoordinate(position, playerHitPositions) ||
-      hasCoordinate(position, playerMissPositions)
+      turn === Turn.opponent ||
+      hasCoordinate(position, hitPositions) ||
+      hasCoordinate(position, missPositions)
     )
       return
 
@@ -91,98 +95,101 @@ const Radar = ({
       cells.push(
         <S.Cell
           key={`${latitude}-${longitude}`}
-          ship={
-            playerTurn !== Turn.player &&
-            hasCoordinate(position, shipsPositions)
-          }
-          hit={hasCoordinate(
-            position,
-            playerTurn === Turn.player
-              ? playerHitPositions
-              : opponentHitPositions,
-          )}
-          miss={hasCoordinate(
-            position,
-            playerTurn === Turn.player
-              ? playerMissPositions
-              : opponentMissPositions,
-          )}
+          ship={side === Turn.player && hasCoordinate(position, shipsPositions)}
+          hit={hasCoordinate(position, hitPositions)}
+          miss={hasCoordinate(position, missPositions)}
           onClick={() => handleShot(position)}
-          playerTurn={playerTurn}
+          turn={turn}
+          side={side}
         />,
       )
     }
   }
 
+  const shipsMap = useMemo(
+    () =>
+      ships.map((ship) => {
+        switch (ship.positions.length) {
+          case 5:
+            return (
+              <S.ShipCarrier
+                key={5}
+                orientation={ship.orientation}
+                top={ship.positions[0].longitude}
+                left={ship.positions[0].latitude}
+              />
+            )
+          case 4:
+            return (
+              <S.ShipSubmarine
+                key={4}
+                orientation={ship.orientation}
+                top={ship.positions[0].longitude}
+                left={ship.positions[0].latitude}
+              />
+            )
+          case 3:
+            return (
+              <S.ShipDestroyer
+                key={3}
+                orientation={ship.orientation}
+                top={ship.positions[0].longitude}
+                left={ship.positions[0].latitude}
+              />
+            )
+          case 2:
+            return (
+              <S.ShipCruiser
+                key={2}
+                orientation={ship.orientation}
+                top={ship.positions[0].longitude}
+                left={ship.positions[0].latitude}
+              />
+            )
+          case 1:
+            return (
+              <S.ShipBoat
+                key={1}
+                orientation={ship.orientation}
+                top={ship.positions[0].longitude}
+                left={ship.positions[0].latitude}
+              />
+            )
+          default:
+            return <></>
+        }
+      }),
+    [ships],
+  )
+
   return (
-    <S.MainContainer gameSize={gameSize}>
-      {playerTurn === Turn.opponent && (
-        <S.ShipsContainer>
-          {ships.map((ship) => {
-            switch (ship.positions.length) {
-              case 5:
-                return (
-                  <S.ShipCarrier
-                    key={5}
-                    orientation={ship.orientation}
-                    top={ship.positions[0].longitude}
-                    left={ship.positions[0].latitude}
-                  />
-                )
-              case 4:
-                return (
-                  <S.ShipSubmarine
-                    key={4}
-                    orientation={ship.orientation}
-                    top={ship.positions[0].longitude}
-                    left={ship.positions[0].latitude}
-                  />
-                )
-              case 3:
-                return (
-                  <S.ShipDestroyer
-                    key={3}
-                    orientation={ship.orientation}
-                    top={ship.positions[0].longitude}
-                    left={ship.positions[0].latitude}
-                  />
-                )
-              case 2:
-                return (
-                  <S.ShipCruiser
-                    key={2}
-                    orientation={ship.orientation}
-                    top={ship.positions[0].longitude}
-                    left={ship.positions[0].latitude}
-                  />
-                )
-              case 1:
-                return (
-                  <S.ShipBoat
-                    key={1}
-                    orientation={ship.orientation}
-                    top={ship.positions[0].longitude}
-                    left={ship.positions[0].latitude}
-                  />
-                )
-              default:
-                return <></>
-            }
-          })}
-        </S.ShipsContainer>
-      )}
-      {winner === Turn.player && (
-        <S.WinnerBanner>
-          <img src={winnerImage} alt="" width={256} height={256} />
-        </S.WinnerBanner>
-      )}
-      {winner === Turn.opponent && (
-        <S.LoserBanner>
-          <img src={loserImage} alt="" width={256} height={256} />
-        </S.LoserBanner>
-      )}
-      {cells}
-    </S.MainContainer>
+    <div>
+      <S.Header>
+        <PlayerStats
+          gameStatus={gameStatus}
+          shipsCounter={5}
+          torpedosCounter={shotsAvailable}
+          side={side}
+          turn={turn}
+        />
+      </S.Header>
+      <S.MainContainer gameSize={gameSize}>
+        {side === Turn.player && (
+          <S.ShipsContainer>{shipsMap}</S.ShipsContainer>
+        )}
+        {winner === Turn.player && (
+          <S.WinnerBanner>
+            <img src={winnerImage} alt="" width={256} height={256} />
+          </S.WinnerBanner>
+        )}
+        {winner === Turn.opponent && (
+          <S.LoserBanner>
+            <img src={loserImage} alt="" width={256} height={256} />
+          </S.LoserBanner>
+        )}
+        {cells}
+      </S.MainContainer>
+    </div>
   )
 }
 

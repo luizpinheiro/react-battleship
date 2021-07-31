@@ -5,17 +5,17 @@ import { useLocation } from 'react-router-dom'
 
 import Header from './components/Header'
 import * as S from './styles'
-import Board from './components/Board'
+import Battleship from './components/Battleship'
 import { GlobalStyles } from './globalStyles'
 
 function App() {
   const location = useLocation()
-  const { p } = QueryString.parse(location.search)
+  const { p: peerId } = QueryString.parse(location.search)
   return (
     <>
       <GlobalStyles />
       <Header />
-      <Board peerId={p ? p.toString() : ''} />
+      <Battleship peerId={peerId ? peerId.toString() : ''} />
       <S.CreditsContainer>
         <div>
           Sound effects by{' '}

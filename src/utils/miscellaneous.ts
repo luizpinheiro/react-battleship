@@ -12,6 +12,9 @@ export const hasCoordinate = (
       coordinate.longitude === position.longitude,
   )
 
+export const samePosition = (a: Coordinate, b: Coordinate): boolean =>
+  a.latitude === b.latitude && a.longitude === b.longitude
+
 export const hasShipOnPosition = (
   position: Coordinate,
   ships: Ship[],

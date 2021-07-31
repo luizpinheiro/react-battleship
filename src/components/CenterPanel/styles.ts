@@ -1,12 +1,15 @@
 import styled from 'styled-components'
 
+export const OutterContainer = styled.div``
+
 export const MainContainer = styled.div`
+  box-sizing: border-box;
   padding: 16px;
   background: #fcfcfc;
   border-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.14);
-  width: 200px;
-  margin-right: 10px;
+  width: 220px;
+  height: 520px;
 `
 
 export const ReadyButton = styled.button`
@@ -67,7 +70,7 @@ export const LogMessage = styled.p`
 `
 
 export const MessagesContainer = styled.div`
-  max-height: 500px;
+  max-height: 290px;
   overflow: auto;
 `
 

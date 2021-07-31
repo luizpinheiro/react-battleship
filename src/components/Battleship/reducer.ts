@@ -6,6 +6,7 @@ import {
   generateShipsRandomlyPositioned,
   hasCoordinate,
   hasShipOnPosition,
+  samePosition,
 } from '../../utils/miscellaneous'
 
 export const PLAYER_SHOTS = 3
@@ -102,6 +103,11 @@ const reducerFunction = (state: State, action: Action): State => {
       if (state.gameStatus !== GameStatus.ongoing) return state
       if (state.playerShots === 0) return state
       if (action.position === undefined) return state
+      if (
+        state.lastShotPosition &&
+        samePosition(action.position, state.lastShotPosition)
+      )
+        return state
       return {
         ...state,
         playerShots: state.playerShots - 1,

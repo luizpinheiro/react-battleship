@@ -10,6 +10,15 @@ import {
 import { Actions, GameStatus, Turn } from '../../enums'
 import { Action } from '../../types'
 
+/**
+ * This hook will monitor state changes and dispatch actions to the connected
+ * peer (the opponent) so they can react to our actions. The reason we need
+ * to monitor our state changes is because we must keep our reducer function pure.
+ *
+ * @param state
+ * @param dispatch
+ * @param peerId
+ */
 export default (
   state: State,
   dispatch: React.Dispatch<Action>,

@@ -28,7 +28,8 @@ const bgAnimation = keyframes`
 export const MainContainer = styled.div<{ gameSize: number }>`
   position: relative;
   margin: 0 auto;
-  width: 100%;
+  flex-shrink: 0;
+  width: ${(props) => props.gameSize * 50 + 20}px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -45,6 +46,11 @@ export const MainContainer = styled.div<{ gameSize: number }>`
     background: url('${waterBgImage}');
     animation: 8s ${bgAnimation} infinite ease-in-out;
   }
+`
+
+export const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
 `
 
 export const CornerBlock = styled.div`
@@ -88,7 +94,8 @@ export const Cell = styled.div<{
   miss: boolean
   hit: boolean
   ship: boolean
-  playerTurn: Turn
+  turn: Turn
+  side: Turn
 }>`
   position: relative;
   z-index: 10;
@@ -102,7 +109,8 @@ export const Cell = styled.div<{
     !props.ship &&
     !props.hit &&
     !props.miss &&
-    props.playerTurn === Turn.player &&
+    props.turn === Turn.player &&
+    props.side === Turn.opponent &&
     `
     &:hover {
       background: url('${crosshairImage}') no-repeat center center;
