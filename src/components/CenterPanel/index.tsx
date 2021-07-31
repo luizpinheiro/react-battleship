@@ -94,7 +94,7 @@ const CenterPanel = ({
         </S.DescriptionText>
       )}
       <S.Separator />
-      {gameStatus !== GameStatus.idle ? <BattleLog log={log} /> : <Rules />}
+      {gameStatus === GameStatus.ongoing ? <BattleLog log={log} /> : <Rules />}
     </S.MainContainer>
   </S.OutterContainer>
 )
