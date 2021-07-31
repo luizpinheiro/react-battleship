@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components'
 
 import crosshairImage from './images/crosshair.png'
 import explosionImage from './images/explosion.png'
-import oceanImage from './images/ocean.png'
+import waterSplashImage from './images/sea.png'
 import { Orientation, Turn } from '../../enums'
 import waterBgImage from './images/water-bg.jpg'
 import submarine from './images/ships/submarine.png'
@@ -120,7 +120,7 @@ export const Cell = styled.div<{
   `}
   ${(props) =>
     props.miss &&
-    `background: url('${oceanImage}') no-repeat center center; background-size: 50px 50px; background-color: rgba(0,0,0,.15);`}
+    `background: url('${waterSplashImage}') no-repeat center center; background-size: 50px 50px; background-color: rgba(0,0,0,.15);`}
   ${(props) =>
     props.hit &&
     `background-image: url('${explosionImage}'); background-color: rgba(0,0,0,.15); background-position: center center; background-repeat: no-repeat; background-size: 42px 42px;`}

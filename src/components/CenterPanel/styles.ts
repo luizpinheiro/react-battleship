@@ -3,13 +3,13 @@ import styled from 'styled-components'
 export const OutterContainer = styled.div``
 
 export const MainContainer = styled.div`
+  margin-top: 5px;
   box-sizing: border-box;
   padding: 16px;
   background: #fcfcfc;
-  border-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.14);
   width: 280px;
-  height: 520px;
+  height: 530px;
 `
 
 export const ReadyButton = styled.button`
