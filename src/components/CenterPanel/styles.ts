@@ -3,6 +3,7 @@ import styled from 'styled-components'
 export const OutterContainer = styled.div``
 
 export const MainContainer = styled.div`
+  position: relative;
   margin-top: 5px;
   box-sizing: border-box;
   padding: 16px;
@@ -10,6 +11,7 @@ export const MainContainer = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.14);
   width: 280px;
   height: 530px;
+  overflow: auto;
 `
 
 export const ReadyButton = styled.button`
