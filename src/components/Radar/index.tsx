@@ -14,6 +14,7 @@ type Props = {
   turn: Turn
   side: Turn
   ships: Ship[]
+  floatingShips: number
   shotsAvailable: number
   hitPositions: Coordinate[]
   missPositions: Coordinate[]
@@ -44,6 +45,7 @@ const Radar = ({
   turn,
   side,
   ships,
+  floatingShips,
   shotsAvailable,
   hitPositions,
   missPositions,
@@ -167,7 +169,7 @@ const Radar = ({
       <S.Header>
         <PlayerStats
           gameStatus={gameStatus}
-          shipsCounter={5}
+          shipsCounter={floatingShips}
           torpedosCounter={shotsAvailable}
           side={side}
           turn={turn}

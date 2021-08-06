@@ -70,6 +70,7 @@ const Battleship = ({ peerId }: Props) => {
           side={Turn.player}
           shotsAvailable={state.playerShots}
           ships={state.playerShips}
+          floatingShips={state.playerFloatingShips}
           hitPositions={state.opponentHits}
           missPositions={state.opponentMisses}
           onShot={handleShot}
@@ -93,6 +94,7 @@ const Battleship = ({ peerId }: Props) => {
           side={Turn.opponent}
           shotsAvailable={state.opponentShots}
           ships={[]}
+          floatingShips={state.opponentFloatingShips}
           hitPositions={state.playerHits}
           missPositions={state.playerMisses}
           onShot={handleShot}
